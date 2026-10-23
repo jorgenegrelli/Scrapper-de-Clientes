@@ -1,0 +1,7 @@
+{saudacao}, tudo bem? Meu nome é {seu_nome}.
+
+Vi que vocês têm nota {nota} no Google, com {avaliacoes_aprox} avaliações. Parabéns, não é fácil manter uma reputação assim.
+
+Procurei o site de vocês para conhecer melhor o trabalho, mas não achei{complemento}. Como trabalho com criação de sites, montei uma prévia de como poderia ficar o de vocês.
+
+Você teria uns 10 minutos nos próximos dias para eu te mostrar?

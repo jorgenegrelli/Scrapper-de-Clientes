@@ -1,0 +1,5 @@
+{saudacao}, tudo bem? Meu nome é {seu_nome}.
+
+Encontrei vocês no Google e procurei o site para conhecer melhor o trabalho, mas não achei{complemento}.
+
+Como trabalho com criação de sites, montei uma prévia de como poderia ficar o de vocês. Você teria uns 10 minutos nos próximos dias para eu te mostrar?

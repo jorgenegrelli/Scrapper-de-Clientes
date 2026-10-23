@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel - __TITULO__</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --shell: #0f3b3a; --shell-2: #164a48; --shell-ink: #eef5f3; --shell-sub: #a8c5c0;
+  --ground: #f1f4f1; --surface: #fff; --surface-2: #f7f9f7; --line: #dfe5e1; --line-2: #ccd5d0;
+  --ink: #15201f; --ink-2: #43524f; --ink-3: #5f6f6b;
+  --accent: #11804c; --accent-hover: #0c6a3e; --accent-soft: #e2f2e9; --accent-ink: #0b5a35;
+  --amber-soft: #fbefd9; --amber-ink: #85520a;
+  --star: #c98a00;
+  --radius: 8px;
+  --shadow: 0 1px 2px rgba(15, 59, 58, .06), 0 4px 14px rgba(15, 59, 58, .06);
+  --ease: cubic-bezier(.16, 1, .3, 1);
+}
+* { box-sizing: border-box; }
+html { scrollbar-color: var(--line-2) var(--ground); }
+body {
+  margin: 0; background: var(--ground); color: var(--ink);
+  font: 15px/1.45 Figtree, system-ui, "Segoe UI", sans-serif;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--accent-soft); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
+svg { width: 16px; height: 16px; flex: none; fill: none; stroke: currentColor; stroke-width: 2;
+      stroke-linecap: round; stroke-linejoin: round; }
+
+/* Cabecalho */
+.shell { background: var(--shell); color: var(--shell-ink); }
+.shell-inner { max-width: 1180px; margin: 0 auto; padding: 22px 24px 18px; }
+.shell h1 { margin: 0; font-size: 1.375rem; font-weight: 700; letter-spacing: -.01em; }
+.shell .sub { margin: 4px 0 0; color: var(--shell-sub); font-size: .875rem; }
+.progress { margin-top: 18px; display: flex; align-items: center; gap: 14px; }
+.progress-track { flex: 1; height: 6px; border-radius: 99px; background: rgba(255,255,255,.14); overflow: hidden; }
+.progress-fill { height: 100%; width: 0; background: #5fd39a; border-radius: 99px; transition: width .4s var(--ease); }
+.progress-label { font-size: .875rem; color: var(--shell-sub); white-space: nowrap; }
+.progress-label b { color: var(--shell-ink); font-weight: 600; }
+
+/* Barra de filtros */
+.toolbar { position: sticky; top: 0; z-index: 5; background: rgba(241, 244, 241, .92);
+           backdrop-filter: saturate(1.4) blur(8px); border-bottom: 1px solid var(--line); }
+.toolbar-inner { max-width: 1180px; margin: 0 auto; padding: 12px 24px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.search { position: relative; flex: 1 1 240px; max-width: 360px; }
+.search svg { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--ink-3); }
+.search input { width: 100%; padding: 8px 12px 8px 34px; }
+input[type=search], select {
+  font: inherit; font-size: .875rem; color: var(--ink); background: var(--surface);
+  border: 1px solid var(--line-2); border-radius: var(--radius); height: 36px;
+}
+select { padding: 0 30px 0 10px; appearance: none; cursor: pointer;
+  background: var(--surface) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235f6f6b' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 9px center / 14px; }
+input[type=search]:hover, select:hover { border-color: var(--ink-3); }
+.seg { display: inline-flex; background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius); padding: 2px; }
+.seg button { font: inherit; font-size: .875rem; border: 0; background: none; color: var(--ink-2); height: 30px; padding: 0 12px;
+              border-radius: 6px; cursor: pointer; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed=true] { background: var(--shell); color: var(--shell-ink); }
+.seg .n { opacity: .7; margin-left: 4px; }
+.resultado { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; }
+.count { font-size: .875rem; color: var(--ink-3); }
+
+/* Lista */
+main { max-width: 1180px; margin: 18px auto 48px; padding: 0 24px; }
+.list { list-style: none; margin: 0; padding: 0; background: var(--surface); border: 1px solid var(--line);
+        border-radius: 12px; box-shadow: var(--shadow); overflow: hidden; }
+.row { border-top: 1px solid var(--line); transition: background .2s var(--ease); }
+.row:first-child { border-top: 0; }
+.row:hover { background: var(--surface-2); }
+.row-grid { display: grid; grid-template-columns: minmax(0, 2.3fr) minmax(0, 1.25fr) minmax(0, 1.15fr) auto;
+            gap: 16px; align-items: center; padding: 14px 18px; }
+.name { font-weight: 600; font-size: 1rem; line-height: 1.3; }
+.meta { margin-top: 3px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; font-size: .8125rem; color: var(--ink-3); }
+.rating { display: inline-flex; align-items: center; gap: 4px; color: var(--ink); font-weight: 600; }
+.rating svg { width: 14px; height: 14px; fill: var(--star); stroke: var(--star); stroke-width: 1; }
+.opened { color: var(--accent-ink); }
+.phone { font-size: .9375rem; color: var(--ink); }
+.tag { display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; font-size: .75rem; font-weight: 600;
+       padding: 2px 8px; border-radius: 99px; background: var(--surface-2); color: var(--ink-2); border: 1px solid var(--line); }
+.tag.cel { background: var(--accent-soft); color: var(--accent-ink); border-color: transparent; }
+.tag.fixo { background: var(--amber-soft); color: var(--amber-ink); border-color: transparent; }
+.site-label { font-size: .875rem; color: var(--ink-2); }
+.site-link { display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; font-size: .8125rem; color: var(--ink-3);
+             text-decoration: none; max-width: 100%; }
+.site-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.site-link:hover { color: var(--accent-ink); text-decoration: underline; text-underline-offset: 3px; }
+.site-link svg { width: 13px; height: 13px; }
+
+.actions { display: flex; align-items: center; gap: 6px; justify-content: flex-end; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; height: 36px; padding: 0 12px;
+       font: inherit; font-size: .875rem; font-weight: 600; color: var(--ink-2); background: var(--surface);
+       border: 1px solid var(--line-2); border-radius: var(--radius); cursor: pointer; text-decoration: none;
+       transition: background .15s, border-color .15s, color .15s, transform .1s; white-space: nowrap; }
+.btn:hover { border-color: var(--ink-3); color: var(--ink); }
+.btn:active { transform: translateY(1px); }
+.btn.icon { width: 36px; padding: 0; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+.btn.sent { min-width: 150px; }
+.btn.sent[aria-pressed=true] { background: var(--accent-soft); border-color: transparent; color: var(--accent-ink); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+.row.done .name, .row.done .phone { color: var(--ink-3); }
+.row.done .name { text-decoration: line-through; text-decoration-color: var(--line-2); }
+
+.more { display: inline-flex; align-items: center; gap: 4px; margin: -6px 0 10px 18px; padding: 2px 0; font: inherit;
+        font-size: .8125rem; color: var(--ink-3); background: none; border: 0; cursor: pointer; }
+.more:hover { color: var(--ink); }
+.more svg { width: 14px; height: 14px; transition: transform .2s var(--ease); }
+.more[aria-expanded=true] svg { transform: rotate(90deg); }
+.detail { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 18px 18px; }
+.detail[hidden] { display: none; }
+.detail h3 { margin: 0 0 8px; font-size: .75rem; font-weight: 600; color: var(--ink-3); text-transform: uppercase; letter-spacing: .04em; }
+.msg { margin: 0; padding: 12px 14px; background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--radius);
+       white-space: pre-wrap; font-size: .875rem; line-height: 1.55; color: var(--ink-2); max-width: 70ch; }
+.review { padding: 8px 0; border-top: 1px solid var(--line); font-size: .8125rem; color: var(--ink-2); }
+.review:first-of-type { border-top: 0; padding-top: 0; }
+.review b { color: var(--ink); font-weight: 600; }
+.review .when { color: var(--ink-3); }
+.none { font-size: .8125rem; color: var(--ink-3); }
+
+.empty { padding: 48px 24px; text-align: center; color: var(--ink-2); }
+.empty p { margin: 0 0 14px; }
+
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 12px); opacity: 0; pointer-events: none;
+         display: flex; align-items: center; gap: 8px; background: var(--ink); color: #fff; font-size: .875rem;
+         padding: 10px 16px; border-radius: var(--radius); box-shadow: 0 8px 24px rgba(0,0,0,.18);
+         transition: opacity .2s var(--ease), transform .2s var(--ease); }
+.toast.on { opacity: 1; transform: translate(-50%, 0); }
+.toast.erro { background: #8a1c1c; }
+
+@media (max-width: 860px) {
+  .row-grid { grid-template-columns: 1fr 1fr; gap: 10px 16px; }
+  .row-grid > .main { grid-column: 1 / -1; }
+  .actions { grid-column: 1 / -1; justify-content: flex-start; flex-wrap: wrap; }
+  .detail { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .shell-inner, .toolbar-inner, main { padding-left: 16px; padding-right: 16px; }
+  .row-grid { grid-template-columns: 1fr; padding: 14px 16px; }
+  .toolbar { position: static; }
+  .search { max-width: none; }
+  .actions .btn.primary { flex: 1; }
+}
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+</head>
+<body>
+<header class="shell">
+  <div class="shell-inner">
+    <h1>Clientes sem site</h1>
+    <p class="sub">__TITULO__ · gerado em __GERADO__</p>
+    <div class="progress" aria-live="polite">
+      <div class="progress-track"><div class="progress-fill" id="barra"></div></div>
+      <span class="progress-label" id="progresso"></span>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-inner">
+    <label class="search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input type="search" id="busca" placeholder="Buscar empresa ou bairro" aria-label="Buscar empresa ou bairro">
+    </label>
+    <div class="seg" role="group" aria-label="Mostrar">
+      <button type="button" data-f="todos">Todos</button>
+      <button type="button" data-f="pendentes">Pendentes<span class="n" id="n-pend"></span></button>
+      <button type="button" data-f="enviados">Enviados<span class="n" id="n-env"></span></button>
+    </div>
+    <select id="situacao" aria-label="Situação do site"><option value="">Qualquer situação</option></select>
+    <select id="ordem" aria-label="Ordenar">
+      <option value="prioridade">Prioridade</option>
+      <option value="avaliacoes">Mais avaliações</option>
+      <option value="nota">Maior nota</option>
+      <option value="nome">Nome (A–Z)</option>
+    </select>
+  </div>
+</div>
+
+<main>
+  <div class="resultado">
+    <span class="count" id="contagem"></span>
+    <button type="button" class="btn" id="copiar-lista" title="Copia nome e número das empresas desta lista, para colar no WhatsApp"></button>
+  </div>
+  <ul class="list" id="lista"></ul>
+</main>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const LEADS = __DADOS__;
+const CHAVE = "painel:" + document.title;
+const TITULO = document.title.replace(/^Painel - /, "");
+let visiveis = [];
+const SITUACAO = {
+  "Sem site": "Sem site", "So Instagram": "Só Instagram", "So Facebook": "Só Facebook", "So WhatsApp": "Só WhatsApp",
+  "Link de bio (Linktree etc.)": "Link de bio", "Site gratuito / subdominio": "Site gratuito",
+  "So perfil em plataforma": "Plataforma de agendamento", "So link do Google": "Só link do Google"
+};
+const ICONE = {
+  chat: '<path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z"/>',
+  copy: '<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>',
+  pin: '<path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  star: '<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1 6.2L12 17.3 6.5 20.2l1-6.2L3 9.6l6.2-.9z"/>',
+  ext: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+  chev: '<path d="m9 6 6 6-6 6"/>'
+};
+const svg = (n) => '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONE[n] + '</svg>';
+
+let estado = { enviados: {}, abertos: {}, filtro: "todos", ordem: "prioridade" };
+try {
+  const salvo = JSON.parse(localStorage.getItem(CHAVE) || "{}");
+  if (salvo.enviados) Object.assign(estado, salvo);
+  else estado.enviados = salvo;  // formato da primeira versao do painel: so o mapa de enviados
+} catch (e) {}
+const salvar = () => { try { localStorage.setItem(CHAVE, JSON.stringify(estado)); } catch (e) {} };
+
+let timer;
+function toast(texto, erro) {
+  const t = document.getElementById("toast");
+  t.innerHTML = svg(erro ? "copy" : "check");
+  t.append(texto);
+  t.classList.toggle("erro", !!erro);
+  t.classList.add("on");
+  clearTimeout(timer);
+  timer = setTimeout(() => t.classList.remove("on"), 2400);
+}
+async function copiar(texto) {
+  try { await navigator.clipboard.writeText(texto); return true; } catch (e) {
+    const x = document.createElement("textarea"); x.value = texto; x.style.position = "fixed"; x.style.opacity = "0";
+    document.body.appendChild(x); x.select();
+    let ok = false; try { ok = document.execCommand("copy"); } catch (e2) {}
+    x.remove(); return ok;
+  }
+}
+function el(tag, cls, texto) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (texto != null) e.textContent = texto;
+  return e;
+}
+function botao(cls, icone, texto, titulo) {
+  const b = el("button", "btn " + cls);
+  b.type = "button";
+  b.innerHTML = svg(icone);
+  if (texto) b.append(texto);
+  if (titulo) { b.title = titulo; b.setAttribute("aria-label", titulo); }
+  return b;
+}
+function tipoTag(tipo) {
+  if (tipo.startsWith("Celular")) return ["cel", "Celular"];
+  if (tipo.startsWith("WhatsApp")) return ["cel", "WhatsApp no Google"];
+  if (tipo.startsWith("Fixo")) return ["fixo", "Fixo · testar WhatsApp"];
+  return ["", "Sem número"];
+}
+function hostDe(url) { try { return new URL(url).hostname.replace(/^www\./, ""); } catch (e) { return url; } }
+function saudacao() {
+  const h = new Date().getHours();
+  return h >= 5 && h < 12 ? "Bom dia" : h >= 12 && h < 18 ? "Boa tarde" : "Boa noite";
+}
+// a mensagem vem com {saudacao}; troca pela hora em que voce clica
+const textoDe = (l) => (l.mensagem || "").split("{saudacao}").join(saudacao());
+const linkDe = (l) => l.wa + (l.mensagem ? "&text=" + encodeURIComponent(textoDe(l)) : "");
+
+function linha(l) {
+  const li = el("li", "row" + (estado.enviados[l.id] ? " done" : ""));
+  const grid = el("div", "row-grid");
+
+  const main = el("div", "main");
+  main.append(el("div", "name", l.empresa));
+  const meta = el("div", "meta");
+  if (l.nota) {
+    const r = el("span", "rating"); r.innerHTML = svg("star"); r.append(l.nota); meta.append(r);
+    meta.append(el("span", "", l.avaliacoes + (l.avaliacoes === 1 ? " avaliação" : " avaliações")));
+  } else meta.append(el("span", "", "Sem avaliações"));
+  if (l.bairro) meta.append(el("span", "", l.bairro));
+  if (estado.abertos[l.id] && !estado.enviados[l.id]) meta.append(el("span", "opened", "Conversa aberta"));
+  main.append(meta);
+
+  const contato = el("div", "contact");
+  contato.append(el("div", "phone", l.telefone || "Sem telefone"));
+  const [cls, rot] = tipoTag(l.tipo);
+  contato.append(el("span", "tag " + cls, rot));
+
+  const site = el("div", "site");
+  site.append(el("div", "site-label", SITUACAO[l.situacao] || l.situacao));
+  if (l.link) {
+    const a = el("a", "site-link"); a.href = l.link; a.target = "_blank"; a.rel = "noopener";
+    a.innerHTML = svg("ext"); a.append(el("span", "", hostDe(l.link))); site.append(a);
+  }
+
+  const acoes = el("div", "actions");
+  const abrir = botao("primary", "chat", "Abrir conversa");
+  if (!l.wa) abrir.disabled = true;
+  abrir.onclick = async () => {
+    const ok = await copiar(textoDe(l));
+    window.open(linkDe(l), "whatsapp");
+    estado.abertos[l.id] = 1; salvar(); render();
+    toast(ok ? "Mensagem copiada. Abrindo a conversa…" : "Abrindo a conversa (não consegui copiar)", !ok);
+  };
+  const cp = botao("icon", "copy", "", "Copiar mensagem");
+  cp.onclick = async () => (await copiar(textoDe(l))) ? toast("Mensagem copiada") : toast("Não consegui copiar", true);
+  const g = el("a", "btn icon"); g.innerHTML = svg("pin"); g.href = l.google; g.target = "google"; g.rel = "noopener";
+  g.title = "Ver no Google Maps"; g.setAttribute("aria-label", "Ver no Google Maps");
+  const env = botao("sent", "check", estado.enviados[l.id] ? "Enviado" : "Marcar enviado");
+  env.setAttribute("aria-pressed", estado.enviados[l.id] ? "true" : "false");
+  env.onclick = () => {
+    if (estado.enviados[l.id]) delete estado.enviados[l.id]; else estado.enviados[l.id] = 1;
+    salvar(); render();
+  };
+  acoes.append(abrir, cp, g, env);
+
+  grid.append(main, contato, site, acoes);
+  li.append(grid);
+
+  const mais = el("button", "more"); mais.type = "button"; mais.setAttribute("aria-expanded", "false");
+  mais.innerHTML = svg("chev"); mais.append("Mensagem e avaliações");
+  const det = el("div", "detail"); det.hidden = true;
+  const c1 = el("div"); c1.append(el("h3", "", "Mensagem"), el("p", "msg", textoDe(l) || "(sem mensagem)"));
+  const c2 = el("div"); c2.append(el("h3", "", "Últimas avaliações"));
+  const revs = (l.avaliacoes_txt || "").split("\n").filter(Boolean);
+  if (!revs.length) c2.append(el("p", "none", "Nenhuma avaliação com texto."));
+  revs.forEach((t) => {
+    const m = t.match(/^(\S+)★ (.*?) \((.*?)\): (.*)$/);
+    const d = el("div", "review");
+    if (m) { d.append(el("b", "", m[1] + "/5 · " + m[2]), " ", el("span", "when", m[3]), el("div", "", m[4])); }
+    else d.textContent = t;
+    c2.append(d);
+  });
+  det.append(c1, c2);
+  mais.onclick = () => { det.hidden = !det.hidden; mais.setAttribute("aria-expanded", String(!det.hidden)); };
+  li.append(mais, det);
+  return li;
+}
+
+function render() {
+  const q = document.getElementById("busca").value.trim().toLowerCase();
+  const sit = document.getElementById("situacao").value;
+  const total = LEADS.length, enviados = LEADS.filter((l) => estado.enviados[l.id]).length;
+  let itens = LEADS.filter((l) =>
+    (estado.filtro === "todos" || (estado.filtro === "enviados") === !!estado.enviados[l.id]) &&
+    (!sit || l.situacao === sit) &&
+    (!q || (l.empresa + " " + l.bairro).toLowerCase().includes(q)));
+  const num = (v) => parseFloat(String(v).replace(",", ".")) || 0;
+  if (estado.ordem === "avaliacoes") itens = itens.slice().sort((a, b) => b.avaliacoes - a.avaliacoes);
+  if (estado.ordem === "nota") itens = itens.slice().sort((a, b) => num(b.nota) - num(a.nota) || b.avaliacoes - a.avaliacoes);
+  if (estado.ordem === "nome") itens = itens.slice().sort((a, b) => a.empresa.localeCompare(b.empresa, "pt-BR"));
+
+  const lista = document.getElementById("lista");
+  lista.textContent = "";
+  if (!itens.length) {
+    const vazio = el("li", "empty");
+    vazio.append(el("p", "", estado.filtro === "pendentes" && !q && !sit
+      ? "Todas as mensagens foram enviadas. Bom trabalho!"
+      : "Nenhuma empresa com esses filtros."));
+    const limpar = el("button", "btn", "Limpar filtros"); limpar.type = "button";
+    limpar.onclick = () => { document.getElementById("busca").value = ""; document.getElementById("situacao").value = "";
+                             estado.filtro = "todos"; salvar(); render(); };
+    vazio.append(limpar);
+    lista.append(vazio);
+  } else itens.forEach((l) => lista.append(linha(l)));
+
+  document.getElementById("barra").style.width = (total ? (100 * enviados / total) : 0) + "%";
+  document.getElementById("progresso").innerHTML = "";
+  const b = el("b", "", enviados + " de " + total);
+  document.getElementById("progresso").append(b, " mensagens enviadas");
+  document.getElementById("n-pend").textContent = total - enviados;
+  document.getElementById("n-env").textContent = enviados;
+  document.getElementById("contagem").textContent = itens.length === total ? total + " empresas" : itens.length + " de " + total + " empresas";
+  visiveis = itens;
+  const nNum = itens.filter((l) => l.numero).length;
+  const bl = document.getElementById("copiar-lista");
+  bl.innerHTML = svg("copy");
+  bl.append("Copiar " + nNum + (nNum === 1 ? " número" : " números"));
+  bl.disabled = !nNum;
+  document.querySelectorAll(".seg button").forEach((x) => x.setAttribute("aria-pressed", String(x.dataset.f === estado.filtro)));
+  document.getElementById("ordem").value = estado.ordem;
+}
+
+const sel = document.getElementById("situacao");
+[...new Set(LEADS.map((l) => l.situacao))].forEach((s) => {
+  const o = document.createElement("option"); o.value = s; o.textContent = SITUACAO[s] || s; sel.append(o);
+});
+document.getElementById("busca").oninput = render;
+sel.onchange = render;
+document.getElementById("ordem").onchange = (e) => { estado.ordem = e.target.value; salvar(); render(); };
+document.querySelectorAll(".seg button").forEach((x) => x.onclick = () => { estado.filtro = x.dataset.f; salvar(); render(); });
+// copia "1. Empresa – +55 41 99999-9999", uma por linha, so das empresas que estao na tela
+document.getElementById("copiar-lista").onclick = async () => {
+  const lista = visiveis.filter((l) => l.numero);
+  const titulo = TITULO.charAt(0).toUpperCase() + TITULO.slice(1);
+  const texto = "*" + titulo + "*\n" + lista.length + (lista.length === 1 ? " contato" : " contatos") + "\n\n" +
+    lista.map((l, i) => (i + 1) + ". " + l.nome + " – " + l.numero).join("\n");
+  const fora = visiveis.length - lista.length;
+  if (await copiar(texto)) {
+    toast(lista.length + " números copiados" + (fora ? " (" + fora + " sem número ficaram de fora)" : "") + ". É só colar no WhatsApp.");
+  } else toast("Não consegui copiar", true);
+};
+render();
+</script>
+</body>
+</html>

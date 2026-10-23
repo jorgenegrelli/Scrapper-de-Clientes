@@ -1,0 +1,3 @@
+# Configuracao pessoal. O INSTALAR.bat cria o arquivo configuracao.txt a partir deste.
+# Seu nome, como aparece nas mensagens ("Aqui e o ...")
+seu_nome = Seu Nome

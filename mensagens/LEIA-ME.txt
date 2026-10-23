@@ -1,0 +1,21 @@
+Aqui ficam as mensagens que ja vao escritas no WhatsApp.
+
+mensagem-destaque.txt -> empresas com nota 4,5 ou mais e pelo menos 20 avaliacoes
+mensagem-padrao.txt   -> todas as outras
+
+Pode editar a vontade (no Bloco de Notas). Estes campos sao trocados automaticamente:
+
+  {saudacao}          "Bom dia" / "Boa tarde" / "Boa noite", pela hora em que voce clica no painel
+                      (na planilha Excel fica "Ola")
+  {seu_nome}          seu nome (vem do arquivo configuracao.txt)
+  {nota}              nota da empresa no Google, ex: 4,8
+  {avaliacoes_aprox}  quantidade de avaliacoes arredondada, ex: "mais de 450" (abaixo de 20 fica o numero exato)
+  {avaliacoes}        quantidade exata de avaliacoes, ex: 471
+  {empresa}           nome da empresa
+  {nicho}             o que voce buscou, ex: dentista
+  {cidade}            a cidade, ex: Curitiba
+  {complemento}       ", so o Instagram" / ", so a pagina no Facebook" / ", so o link do WhatsApp" ...
+                      (vazio quando a empresa nao tem link nenhum)
+
+Depois de editar, rode a busca de novo (ou peca para gerar a planilha a partir dos dados ja salvos).
+Se apagar todo o texto de um arquivo, o link abre a conversa vazia.

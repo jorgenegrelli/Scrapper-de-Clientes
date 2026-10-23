@@ -1,0 +1,17 @@
+# Dados das buscas: telefones e nomes de empresas/pessoas. Nunca publicar.
+Planilhas/
+sistema/dados-brutos/
+*.xlsx
+*.csv
+~$*
+
+# Configuracao pessoal e caminhos desta maquina
+configuracao.txt
+sistema/python.txt
+
+# Motor (baixado pelo INSTALAR.bat) e o banco de dados dele
+motor/
+
+__pycache__/
+*.pyc
+*.baixando
